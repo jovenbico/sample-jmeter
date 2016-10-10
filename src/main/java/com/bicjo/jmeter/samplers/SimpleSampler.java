@@ -1,43 +1,65 @@
 package com.bicjo.jmeter.samplers;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
+import org.apache.jorphan.logging.LoggingManager;
+import org.apache.log.Logger;
 
 public class SimpleSampler extends AbstractSampler {
 
 	private static final long serialVersionUID = 7190918227654846185L;
 
-	private int number1;
-	private int number2;
+	private static final Logger LOG = LoggingManager.getLoggerForClass();
+
+	private static AtomicInteger classCount = new AtomicInteger(0);
+
+	// The name of the property used to hold our data
+	public static final String DATA = "ExampleSampler.data";
+
+	public SimpleSampler() {
+		trace("ExampleSampler()");
+	}
 
 	@Override
 	public SampleResult sample(Entry entry) {
 
 		SampleResult sampleResult = new SampleResult();
-		sampleResult.setSampleLabel("simple-sampler");
+		sampleResult.setSampleLabel(getLabel());
 		sampleResult.sampleStart();
 
 		try {
 
-			System.out.println("simple-sampler: " + number1 + number2);
+			trace("sample()");
 
-			sampleResult.setSuccessful(Boolean.TRUE);
+			sampleResult.setSamplerData(getPropertyAsString(DATA));
+
+			sampleResult.setResponseCodeOK();
+			sampleResult.setResponseMessage("OK");
+
 		} catch (Exception e) {
+			sampleResult.setResponseCode("500");
+			sampleResult.setResponseMessage(e.toString());
 			sampleResult.setSuccessful(Boolean.FALSE);
 		}
 
 		sampleResult.sampleEnd();
+		sampleResult.setSuccessful(Boolean.TRUE);
 
 		return sampleResult;
 	}
 
-	public void setNumber1(int number1) {
-		this.number1 = number1;
+	private String getLabel() {
+		return this.getName();
 	}
 
-	public void setNumber2(int number2) {
-		this.number2 = number2;
+	private void trace(String s) {
+		String tl = getLabel();
+		String tn = Thread.currentThread().getName();
+		String th = this.toString();
+		LOG.info(tn + " (" + classCount.get() + ") " + tl + " " + s + " " + th);
 	}
 
 }

@@ -3,10 +3,13 @@ package com.bicjo.jmeter.samplers.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 
-import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
+import org.apache.jmeter.util.JMeterUtils;
 
 import com.bicjo.jmeter.samplers.SimpleSampler;
 
@@ -19,8 +22,28 @@ public class SimpleSamplerGui extends AbstractSamplerGui {
 
 	private static final long serialVersionUID = 7692201636100496557L;
 
+	private JTextArea data;
+
 	public SimpleSamplerGui() {
 		init();
+	}
+
+	@Override
+	public String getStaticLabel() {
+		return "simple-sample-sampler";
+	}
+
+	@Override
+	public String getLabelResource() {
+		// will do it with overriding getStaticLabel() and my own properties
+		// file
+		return null;
+	}
+
+	@Override
+	public void configure(TestElement element) {
+		data.setText(element.getPropertyAsString(SimpleSampler.DATA));
+		super.configure(element);
 	}
 
 	/**
@@ -35,44 +58,37 @@ public class SimpleSamplerGui extends AbstractSamplerGui {
 		return sampler;
 	}
 
-	@Override
-	public String getLabelResource() {
-		// TODO
-		return null;
-	}
-
 	/**
 	 * This is where you move the data from your gui elements to the TestElement
 	 */
 	@Override
-	public void modifyTestElement(TestElement te) {
-		super.configureTestElement(te);
-		// TODO
+	public void modifyTestElement(TestElement testElement) {
+		testElement.clear();
+		configureTestElement(testElement);
+		testElement.setProperty(SimpleSampler.DATA, data.getText());
 	}
 
 	private void init() {
-		setLayout(new BorderLayout());
+		setLayout(new BorderLayout(0, 5));
 		setBorder(makeBorder());
-		Box box = Box.createVerticalBox();
-		box.add(makeTitlePanel());
-		box.add(makeSourcePanel());
-		add(box, BorderLayout.NORTH);
-		add(makeParameterPanel(), BorderLayout.CENTER);
+		add(makeTitlePanel(), BorderLayout.NORTH);
+
+		// Specific setup
+		add(createDataPanel(), BorderLayout.CENTER);
 	}
 
-	@Override
-	public void configure(TestElement element) {
-		super.configure(element);
-	}
+	private Component createDataPanel() {
+		JLabel label = new JLabel(JMeterUtils.getResString("example_data")); //$NON-NLS-1$
 
-	private Component makeParameterPanel() {
-		// TODO
-		return null;
-	}
+		data = new JTextArea();
+		data.setName(SimpleSampler.DATA);
+		label.setLabelFor(data);
 
-	private Component makeSourcePanel() {
-		// TODO
-		return null;
+		JPanel dataPanel = new JPanel(new BorderLayout(5, 0));
+		dataPanel.add(label, BorderLayout.WEST);
+		dataPanel.add(data, BorderLayout.CENTER);
+
+		return dataPanel;
 	}
 
 }
