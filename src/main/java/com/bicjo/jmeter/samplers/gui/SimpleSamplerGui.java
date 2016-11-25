@@ -1,15 +1,9 @@
 package com.bicjo.jmeter.samplers.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
-import org.apache.jmeter.util.JMeterUtils;
 
 import com.bicjo.jmeter.samplers.SimpleSampler;
 
@@ -22,7 +16,9 @@ public class SimpleSamplerGui extends AbstractSamplerGui {
 
 	private static final long serialVersionUID = 7692201636100496557L;
 
-	private JTextArea data;
+//	private JTextArea data;
+	
+	private SimpleSampleDataPanel dataPanel = new SimpleSampleDataPanel();
 
 	public SimpleSamplerGui() {
 		init();
@@ -42,7 +38,7 @@ public class SimpleSamplerGui extends AbstractSamplerGui {
 
 	@Override
 	public void configure(TestElement element) {
-		data.setText(element.getPropertyAsString(SimpleSampler.DATA));
+		dataPanel.setDataTextValue(element.getPropertyAsString(SimpleSampler.DATA));
 		super.configure(element);
 	}
 
@@ -65,7 +61,7 @@ public class SimpleSamplerGui extends AbstractSamplerGui {
 	public void modifyTestElement(TestElement testElement) {
 		testElement.clear();
 		configureTestElement(testElement);
-		testElement.setProperty(SimpleSampler.DATA, data.getText());
+		testElement.setProperty(SimpleSampler.DATA, dataPanel.getDataTextValue());
 	}
 
 	private void init() {
@@ -74,21 +70,21 @@ public class SimpleSamplerGui extends AbstractSamplerGui {
 		add(makeTitlePanel(), BorderLayout.NORTH);
 
 		// Specific setup
-		add(createDataPanel(), BorderLayout.CENTER);
+		add(dataPanel.createDataPanel(), BorderLayout.CENTER);
 	}
 
-	private Component createDataPanel() {
-		JLabel label = new JLabel(JMeterUtils.getResString("example_data")); //$NON-NLS-1$
-
-		data = new JTextArea();
-		data.setName(SimpleSampler.DATA);
-		label.setLabelFor(data);
-
-		JPanel dataPanel = new JPanel(new BorderLayout(5, 0));
-		dataPanel.add(label, BorderLayout.WEST);
-		dataPanel.add(data, BorderLayout.CENTER);
-
-		return dataPanel;
-	}
+//	private Component createDataPanel() {
+//		JLabel label = new JLabel(JMeterUtils.getResString("example_data")); //$NON-NLS-1$
+//
+//		data = new JTextArea();
+//		data.setName(SimpleSampler.DATA);
+//		label.setLabelFor(data);
+//
+//		JPanel dataPanel = new JPanel(new BorderLayout(5, 0));
+//		dataPanel.add(label, BorderLayout.WEST);
+//		dataPanel.add(data, BorderLayout.CENTER);
+//
+//		return dataPanel;
+//	}
 
 }
